@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Trade Ronit Smart Journal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+padding:20px;
+margin:0;
+}
+
+.box{
+background:#1e293b;
+padding:15px;
+border-radius:10px;
+margin-bottom:15px;
+}
+
+input,select,textarea{
+width:100%;
+padding:10px;
+margin-top:8px;
+border-radius:6px;
+border:none;
+}
+
+button{
+width:100%;
+padding:12px;
+border:none;
+border-radius:6px;
+margin-top:10px;
+background:#22c55e;
+color:white;
+}
+
+.stats{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.stat{
+background:#334155;
+padding:10px;
+border-radius:8px;
+text-align:center;
+}
+
+.good{color:#22c55e;}
+.bad{color:#ef4444;}
+.warn{color:#facc15;}
+
+.trade{
+background:#1e293b;
+padding:10px;
+margin-top:10px;
+border-radius:8px;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>📊 Trade Ronit Smart Journal</h1>
+
+<!-- STATS -->
+<div class="stats">
+<div class="stat">Profit<br><span id="profit" class="good">0</span></div>
+<div class="stat">Loss<br><span id="loss" class="bad">0</span></div>
+<div class="stat">Net<br><span id="net">0</span></div>
+<div class="stat">Win Rate<br><span id="winrate">0%</span></div>
+</div>
+
+<!-- TRADE FORM -->
+<div class="box">
+
+<h3>➕ Add Trade</h3>
+
+<input id="pair" placeholder="BTCUSDT">
+
+<select id="side">
+<option>Buy</option>
+<option>Sell</option>
+</select>
+
+<input id="pnl" placeholder="PnL (+ / -)">
+<input id="entry" placeholder="Entry Price">
+
+<select id="result">
+<option>Win</option>
+<option>Loss</option>
+</select>
+
+<select id="setup">
+<option>Support/Resistance</option>
+<option>Breakout</option>
+<option>Trend</option>
+<option>Reversal</option>
+</select>
+
+<select id="emotion">
+<option>Disciplined</option>
+<option>FOMO</option>
+<option>Overtrading</option>
+<option>Emotional</option>
+</select>
+
+<textarea id="note" placeholder="Why this trade? Mistake? Lesson?"></textarea>
+
+<button onclick="addTrade()">Save Trade</button>
+
+</div>
+
+<!-- HISTORY -->
+<div class="box">
+<h3>📌 Trade History</h3>
+<div id="history"></div>
+</div>
+
+<script>
+
+let profit=0;
+let loss=0;
+let wins=0;
+let total=0;
+let tradesPerDay=0;
+
+function addTrade(){
+
+let pnl=parseFloat(document.getElementById("pnl").value)||0;
+let result=document.getElementById("result").value;
+let emotion=document.getElementById("emotion").value;
+
+total++;
+tradesPerDay++;
+
+if(pnl>=0) profit+=pnl;
+else loss+=pnl;
+
+if(result==="Win") wins++;
+
+let winrate=((wins/total)*100).toFixed(1);
+
+// OVERTRADING CHECK
+let overtradeMsg="";
+if(tradesPerDay>5){
+overtradeMsg="⚠️ Overtrading DETECTED (more than 5 trades today)";
+}
+
+let trade=document.createElement("div");
+trade.className="trade";
+
+trade.innerHTML=`
+<b>${document.getElementById("pair").value}</b> (${document.getElementById("side").value})<br>
+Entry: ${document.getElementById("entry").value}<br>
+PnL: ${pnl}<br>
+Result: ${result}<br>
+Setup: ${document.getElementById("setup").value}<br>
+Emotion: ${emotion}<br>
+🧠 Note: ${document.getElementById("note").value}<br>
+${overtradeMsg ? "<span class='warn'>"+overtradeMsg+"</span>" : ""}
+`;
+
+document.getElementById("history").appendChild(trade);
+
+// UPDATE STATS
+document.getElementById("profit").innerText=profit;
+document.getElementById("loss").innerText=loss;
+document.getElementById("net").innerText=profit+loss;
+document.getElementById("winrate").innerText=winrate+"%";
+
+}
+
+</script>
+
+</body>
+</html>
